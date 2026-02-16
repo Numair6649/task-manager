@@ -1,4 +1,5 @@
 import json
+import sys
 from pprint import pprint
 
 
@@ -15,7 +16,7 @@ def addTask(task):
     ]
 
     try:
-        with open("Task Manager/tasks.json", mode="r") as file:
+        with open("tasks.json", mode="r") as file:
                 
                 data = json.load(file)
                 
@@ -33,28 +34,28 @@ def addTask(task):
                 data.append(new_data)
                 
     except FileNotFoundError:
-        with open("Task Manager/tasks.json", mode="w") as file:
+        with open("tasks.json", mode="w") as file:
             json.dump(new_data,file,indent=4)
     else:
-        with open("Task Manager/tasks.json", mode="w") as file:
+        with open("tasks.json", mode="w") as file:
             json.dump(data,file,indent=4)
 
 
 def viewTask():
     data = list()
     try:
-        with open("Task Manager/tasks.json", mode="r") as file:  
+        with open("tasks.json", mode="r") as file:  
                 data = json.load(file)
                 pprint(data)
     except FileNotFoundError:
-        with open("Task Manager/tasks.json", mode="w") as file:
+        with open("tasks.json", mode="w") as file:
                 json.dump(data,file)
                 pprint(data)
                 
 def updateTask():
     
     try:
-        with open("Task Manager/tasks.json", mode="r") as file:
+        with open("tasks.json", mode="r") as file:
             data = json.load(file)
             pprint(data)
 
@@ -91,14 +92,14 @@ def updateTask():
             else:
                 print("wrong input. Try again")
                 
-            with open("Task Manager/tasks.json", mode="w") as file:
+            with open("tasks.json", mode="w") as file:
                 json.dump(data,file,indent=4)
 
         
 def deleteTask():
     id_flag = False
     try:
-        with open("Task Manager/tasks.json", mode="r") as file:  
+        with open("tasks.json", mode="r") as file:  
                 data = json.load(file)
                 pprint(data)
     except FileNotFoundError:
@@ -116,7 +117,7 @@ def deleteTask():
             if not id_flag:
                 print("There is no Task associated with that id")
                 
-            with open("Task Manager/tasks.json", mode="w") as file:
+            with open("tasks.json", mode="w") as file:
                 json.dump(updated_data,file,indent=4)
         
         
@@ -126,10 +127,18 @@ def deleteTask():
 
 
 print("Welcome to Task Manager \n")
-user_input = input("What do want to do in the task Manager? View/Update/Add/Delete a task ?").lower()
+
+# CLI mode: python main.py <command> [task]
+if len(sys.argv) > 1:
+    user_input = sys.argv[1].lower()
+else:
+    user_input = input("What do want to do in the task Manager? View/Update/Add/Delete a task ?").lower()
 
 if user_input == "add":
-        user_task = input("What Task do you want to add?  ")
+        if len(sys.argv) > 2:
+            user_task = sys.argv[2]
+        else:
+            user_task = input("What Task do you want to add?  ")
         addTask(user_task)
 elif user_input == "view":
     viewTask()
